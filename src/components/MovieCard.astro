@@ -1,0 +1,24 @@
+---
+import astroLogo from '../assets/astro.svg';
+import background from '../assets/background.svg';
+
+const {id, title, image, release_date, rt_score  } = Astro.props
+---
+
+<div class="group block overflow-hidden rounded-xl bg-zinc-900 cursor-pointer transition-all hover:scale-101">
+	<img 
+		src={image}
+		alt={image}
+		loading="lazy"
+		class="aspect-2/3 w-full object-cover"
+	/>
+ 
+	<div class="p-3">
+<h2 class="font-semibold group-hover:text-amber-400">
+	{title}
+</h2>
+		<p class="text-sm text-zinc-400">
+			{release_date}
+		</p>
+	</div>
+</div>
