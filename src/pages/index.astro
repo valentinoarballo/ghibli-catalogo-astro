@@ -3,11 +3,12 @@ import MovieCard from '../components/MovieCard.astro';
 import Layout from '../layouts/Layout.astro';
 
 const res = await fetch("https://ghibliapi.vercel.app/films")
-const films = await res.json()
+const films: any[] = await res.json()
 
 ---
 
 <Layout title="Catalogo Ghibli">
+
 	<h1 class="mb-6 text-3xl font-bold">Películas</h1>
 	<div class="grid grid-cols-3 gap-4">
 		{films.map((film) => <MovieCard {...film}/>)}
