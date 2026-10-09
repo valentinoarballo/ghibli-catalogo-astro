@@ -1,6 +1,8 @@
 ---
-import MovieCard from '../components/MovieCard.astro';
 import Layout from '../layouts/Layout.astro';
+import Buscador from '../components/Buscador';
+import PeliculaAleatoria from '../components/PeliculaAleatoria.astro';
+
 
 const res = await fetch("https://ghibliapi.vercel.app/films")
 const films: any[] = await res.json()
@@ -8,10 +10,12 @@ const films: any[] = await res.json()
 ---
 
 <Layout title="Catalogo Ghibli">
-
 	<h1 class="mb-6 text-3xl font-bold">Películas</h1>
-	<div class="grid grid-cols-3 gap-4">
-		{films.map((film) => <MovieCard {...film}/>)}
-	</div>
-	
+
+	<PeliculaAleatoria server:defer>
+		<div slot="fallback" class="mb-8 h-48 bg-zinc-800 animate-pulse rounded-2xl"></div>
+	</PeliculaAleatoria>
+
+	<Buscador films={films} client:load />
+
 </Layout>
