@@ -1,89 +1,99 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import FormResena from "../../components/FormResena"
-
-
+import FormResena from "../../components/FormResena";
 
 const { id } = Astro.params;
 const res = await fetch(`https://ghibliapi.vercel.app/films/${id}`);
+
+if (!res.ok) {
+  return new Response(null, { status: 404, statusText: "Película no encontrada" });
+}
+
 const film = await res.json();
 ---
 
-<Layout title="Pelicula">
-    <a href="/" class="flex items-center gap-2 hover:text-amber-300">
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            class="bi bi-arrow-left"
-            viewBox="0 0 16 16"
-        >
-            <path
-                fill-rule="evenodd"
-                d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"
-            ></path>
-        </svg>
-        Volver al catálogo</a
+<Layout title={film.title}>
+  <a
+    href="/"
+    class="inline-flex items-center gap-2 text-sm text-zinc-400 transition hover:text-amber-300"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+      class="h-4 w-4"
+      viewBox="0 0 16 16"
     >
+      <path
+        fill-rule="evenodd"
+        d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"
+      ></path>
+    </svg>
+    Volver al catálogo
+  </a>
+
+  <!-- Banner -->
+  <div class="relative mt-4 h-56 overflow-hidden rounded-2xl ring-1 ring-white/10 sm:h-72">
+    <img src={film.movie_banner} alt="" class="h-full w-full object-cover" />
+    <div class="absolute inset-0 bg-gradient-to-t from-zinc-950/80 to-transparent"></div>
+  </div>
+
+  <!-- Poster + información -->
+  <div class="flex flex-col gap-6 px-2 md:flex-row md:px-8">
     <img
-        src={film.movie_banner}
-        alt={film.title}
-        class="h-64 w-full object-cover rounded-2xl mt-3"
+      transition:name={`poster-${film.id}`}
+      src={film.image}
+      alt={film.title}
+      class="relative z-10 -mt-20 aspect-[2/3] w-40 shrink-0 self-center rounded-xl object-cover shadow-2xl shadow-black/60 ring-1 ring-white/10 md:-mt-28 md:w-52 md:self-start"
     />
 
-    <div class="mt-6 flex flex-row gap-6">
-        <img
-            transition:name={`img-${id}`}
-            src={film.image}
-            alt={film.title}
-            loading="lazy"
-            class="w-48 self-start rounded-xl"
-        />
+    <div class="pt-2 md:pt-6">
+      <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">{film.title}</h1>
+      <p class="mt-1 text-zinc-400">
+        {film.original_title} · {film.original_title_romanised}
+      </p>
 
-        <div>
-            <h1 class="text-4xl font-bold">{film.title}</h1>
-            <p class="text-zinc-500">
-                {film.original_title} - {film.original_title_romanised}
-            </p>
-
-            <dl
-                class="mt-4 grid gap-x-6 gap-y-2 text-sm grid-cols-4 text-zinc-500"
-            >
-                <div>
-                    <dt>Año</dt>
-                    <dd>{film.release_date}</dd>
-                </div>
-                <div>
-                    <dt>Duración</dt>
-                    <dd>{film.running_time}</dd>
-                </div>
-                <div>
-                    <dt>Director</dt>
-                    <dd>{film.director}</dd>
-                </div>
-                <div class="text-yellow-500/80">
-                    <dt>Rotten Tomatoes Score</dt>
-                    <dd class="flex items-center gap-2">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            class="bi bi-star-fill"
-                            viewBox="0 0 16 16"
-                        >
-                            <path
-                                d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"
-                            ></path>
-                        </svg>
-                        {film.rt_score}
-                    </dd>
-                </div>
-            </dl>
+      <dl class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div class="rounded-xl bg-zinc-900 p-3 ring-1 ring-zinc-800">
+          <dt class="text-xs uppercase tracking-wide text-zinc-500">Año</dt>
+          <dd class="mt-1 font-semibold">{film.release_date}</dd>
         </div>
+        <div class="rounded-xl bg-zinc-900 p-3 ring-1 ring-zinc-800">
+          <dt class="text-xs uppercase tracking-wide text-zinc-500">Duración</dt>
+          <dd class="mt-1 font-semibold">{film.running_time} min</dd>
+        </div>
+        <div class="rounded-xl bg-zinc-900 p-3 ring-1 ring-zinc-800">
+          <dt class="text-xs uppercase tracking-wide text-zinc-500">Director</dt>
+          <dd class="mt-1 font-semibold">{film.director}</dd>
+        </div>
+        <div class="rounded-xl bg-zinc-900 p-3 ring-1 ring-zinc-800">
+          <dt class="text-xs uppercase tracking-wide text-zinc-500">Rotten Tomatoes</dt>
+          <dd class="mt-1 flex items-center gap-2 font-semibold text-amber-400">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              class="h-4 w-4"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"
+              ></path>
+            </svg>
+            {film.rt_score}
+          </dd>
+        </div>
+      </dl>
+
+      <p class="mt-6 max-w-2xl leading-relaxed text-zinc-300">
+        {film.description}
+      </p>
+      <p class="mt-4 text-sm text-zinc-500">
+        Productor: <span class="text-zinc-400">{film.producer}</span>
+      </p>
     </div>
+  </div>
 
-    <FormResena client:load/>
-
+  <!-- Reseñas -->
+  <div class="mt-12 border-t border-zinc-800 pt-2 md:px-8">
+    <FormResena client:load />
+  </div>
 </Layout>
