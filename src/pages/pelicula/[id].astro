@@ -1,5 +1,8 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import FormResena from "../../components/FormResena"
+
+
 
 const { id } = Astro.params;
 const res = await fetch(`https://ghibliapi.vercel.app/films/${id}`);
@@ -80,4 +83,7 @@ const film = await res.json();
             </dl>
         </div>
     </div>
+
+    <FormResena client:load/>
+
 </Layout>
